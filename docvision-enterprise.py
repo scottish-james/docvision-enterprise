@@ -858,7 +858,7 @@ def check_dependencies():
 
     # Check LibreOffice
     converter = DocVision.__new__(DocVision)
-    converter.libreoffice_path = converter._find_libreoffice(converter)
+    converter.libreoffice_path = converter._find_libreoffice()
     if converter.libreoffice_path:
         print(f"  ✅ LibreOffice PowerPoint support")
     else:
