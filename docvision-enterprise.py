@@ -298,21 +298,29 @@ class DocVision:
         Args:
             config: Configuration object
         """
+        # Setup logging FIRST - before anything else
+        logging.basicConfig(level=logging.INFO, format='%(message)s')
+        self.logger = logging.getLogger(__name__)
+
         # Load environment variables
         load_dotenv()
 
         # Setup configuration
-        self.config = config or self._load_config()
+        try:
+            self.config = config or self._load_config()
+        except Exception as e:
+            self.logger.error(f"[ERROR] Failed to load configuration: {e}")
+            raise
 
         # Initialise LLM client
-        self.llm_client = self._initialise_llm_client()
+        try:
+            self.llm_client = self._initialise_llm_client()
+        except Exception as e:
+            self.logger.error(f"[ERROR] Failed to initialize LLM client: {e}")
+            raise
 
         # Find LibreOffice for PowerPoint conversion
         self.libreoffice_path = self._find_libreoffice()
-
-        # Setup logging
-        logging.basicConfig(level=logging.INFO, format='%(message)s')
-        self.logger = logging.getLogger(__name__)
 
     def _load_config(self) -> Config:
         """Load configuration from files."""
