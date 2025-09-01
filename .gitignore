@@ -69,3 +69,5 @@ converted/
 # Cache
 .cache/
 *.cache
+docvision.py
+readme-openai.md
