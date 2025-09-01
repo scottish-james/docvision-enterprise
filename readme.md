@@ -279,19 +279,19 @@ classDiagram
 
 ```mermaid
 graph LR
-    subgraph Input Factors
+    subgraph InputFactors[Input Factors]
         A[Document Size]
         B[Page Count]
         C[Content Complexity]
     end
     
-    subgraph Processing Time
+    subgraph ProcessingTime[Processing Time]
         D[~10 sec/page]
         E[API Calls]
         F[Image Processing]
     end
     
-    subgraph Output Quality
+    subgraph OutputQuality[Output Quality]
         G[94% Accuracy]
         H[Structure Preserved]
         I[Links Maintained]
@@ -304,9 +304,15 @@ graph LR
     E --> H
     F --> I
     
-    style "Input Factors" fill:#e1f5fe
-    style "Processing Time" fill:#fff3e0
-    style "Output Quality" fill:#e8f5e9
+    %% Define classes
+    classDef input fill:#e1f5fe,stroke:#0277bd,stroke-width:2px;
+    classDef processing fill:#fff3e0,stroke:#ef6c00,stroke-width:2px;
+    classDef output fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+
+    %% Apply classes to subgraphs
+    class InputFactors input;
+    class ProcessingTime processing;
+    class OutputQuality output;
 ```
 
 ## Common Use Cases
