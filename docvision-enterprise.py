@@ -857,12 +857,50 @@ def check_dependencies():
         print(f"  [FAIL] Poppler     PDF support (install poppler-utils)")
 
     # Check LibreOffice
-    converter = DocVision.__new__(DocVision)
-    converter.libreoffice_path = converter._find_libreoffice()
-    if converter.libreoffice_path:
-        print(f"  [OK] LibreOffice PowerPoint support")
-    else:
-        print(f"  [WARN] LibreOffice PowerPoint support (optional)")
+    try:
+        # Create a minimal instance just to check LibreOffice
+        temp_converter = DocVision.__new__(DocVision)
+        # Manually call _find_libreoffice without full initialization
+        import platform
+
+        system = platform.system()
+        libreoffice_path = None
+
+        if system == "Darwin":  # macOS
+            paths = [
+                "/Applications/LibreOffice.app/Contents/MacOS/soffice",
+                "/opt/homebrew/bin/soffice",
+                "/usr/local/bin/soffice"
+            ]
+        elif system == "Windows":
+            paths = [
+                r"C:\Program Files\LibreOffice\program\soffice.exe",
+                r"C:\Program Files (x86)\LibreOffice\program\soffice.exe"
+            ]
+        else:  # Linux
+            paths = [
+                "/usr/bin/soffice",
+                "/usr/local/bin/soffice",
+                "/snap/bin/libreoffice",
+                "/usr/bin/libreoffice"
+            ]
+
+        # Check specific paths
+        for path in paths:
+            if Path(path).exists():
+                libreoffice_path = path
+                break
+
+        # Check system PATH if not found
+        if not libreoffice_path:
+            libreoffice_path = shutil.which("soffice") or shutil.which("libreoffice")
+
+        if libreoffice_path:
+            print(f"  [OK] LibreOffice PowerPoint support")
+        else:
+            print(f"  [WARN] LibreOffice PowerPoint support (optional)")
+    except Exception as e:
+        print(f"  [WARN] LibreOffice check failed: {e}")
 
     # Check Enterprise LLM configuration
     print("\nEnterprise LLM Configuration:")
