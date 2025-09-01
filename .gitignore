@@ -35,16 +35,6 @@ env/
 *~
 .DS_Store
 
-# Project specific
-markdown_output/
-*.md
-!README.md
-*.pptx
-*.ppt
-*.pdf
-!example.pdf
-!example.pptx
-
 # Sensitive data
 ../.env
 *.key
