@@ -35,6 +35,10 @@ env/
 *~
 .DS_Store
 
+# old files
+docvision.py
+readme-openai.md
+
 # Sensitive data
 ../.env
 *.key
