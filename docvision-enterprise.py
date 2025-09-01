@@ -343,7 +343,7 @@ class DocVision:
 
     def _initialise_llm_client(self) -> EnterpriseLLMClient:
         """Initialise the Enterprise LLM client."""
-        self.logger.info("🏢 Using Enterprise LLM")
+        self.logger.info("[INFO] Using Enterprise LLM")
 
         client = EnterpriseLLMClient(
             self.config.enterprise_jwt_token,
@@ -352,7 +352,7 @@ class DocVision:
 
         # Test connection
         if not client.test_connection():
-            self.logger.warning("⚠️  Enterprise endpoint may be unreachable")
+            self.logger.warning("[WARN] Enterprise endpoint may be unreachable")
 
         return client
 
@@ -391,7 +391,7 @@ class DocVision:
         output_path = output_dir / f"{file_path.stem}.md"
 
         # Log start
-        self.logger.info(f"📄 Converting with Enterprise LLM: {file_path.name}")
+        self.logger.info(f"[PROCESSING] Converting with Enterprise LLM: {file_path.name}")
         self.logger.info(f"   Size: {file_size_mb:.1f}MB")
 
         # Route to appropriate converter
@@ -409,7 +409,7 @@ class DocVision:
 
         # Save output
         output_path.write_text(markdown, encoding='utf-8')
-        self.logger.info(f"✅ Saved to: {output_path}")
+        self.logger.info(f"[SUCCESS] Saved to: {output_path}")
 
         return output_path
 
@@ -684,16 +684,16 @@ class DocVision:
 
                 # Pause between files in batch mode
                 if file_num < len(files):
-                    self.logger.info(f"⏸️  Pausing {self.config.pause_seconds} seconds before next file...")
+                    self.logger.info(f"[PAUSE] Pausing {self.config.pause_seconds} seconds before next file...")
                     time.sleep(self.config.pause_seconds)
 
             except Exception as e:
-                self.logger.error(f"❌ Failed: {file_path.name} - {e}")
+                self.logger.error(f"[ERROR] Failed: {file_path.name} - {e}")
                 results.append((file_path, None))
 
         # Summary
         successful = sum(1 for _, output in results if output)
-        self.logger.info(f"\n📊 Summary: {successful}/{len(files)} converted successfully")
+        self.logger.info(f"\n[SUMMARY] {successful}/{len(files)} converted successfully")
 
         return results
 
@@ -823,7 +823,7 @@ def check_dependencies():
     # Check Python version
     print(f"\nPython: {sys.version}")
     if sys.version_info < (3, 8):
-        print("  ⚠️  Python 3.8+ recommended")
+        print("  [WARN] Python 3.8+ recommended")
 
     # Check required packages
     print("\nPython packages:")
@@ -842,9 +842,9 @@ def check_dependencies():
                 import dotenv
             else:
                 __import__(module)
-            print(f"  ✅ {module:<12} {description}")
+            print(f"  [OK] {module:<12} {description}")
         except ImportError:
-            symbol = "❌" if required else "⚠️ "
+            symbol = "[FAIL]" if required else "[WARN]"
             print(f"  {symbol} {module:<12} {description}")
 
     # Check system dependencies
@@ -852,17 +852,17 @@ def check_dependencies():
 
     # Check Poppler
     if shutil.which('pdftoppm'):
-        print(f"  ✅ Poppler     PDF support")
+        print(f"  [OK] Poppler     PDF support")
     else:
-        print(f"  ❌ Poppler     PDF support (install poppler-utils)")
+        print(f"  [FAIL] Poppler     PDF support (install poppler-utils)")
 
     # Check LibreOffice
     converter = DocVision.__new__(DocVision)
     converter.libreoffice_path = converter._find_libreoffice()
     if converter.libreoffice_path:
-        print(f"  ✅ LibreOffice PowerPoint support")
+        print(f"  [OK] LibreOffice PowerPoint support")
     else:
-        print(f"  ⚠️  LibreOffice PowerPoint support (optional)")
+        print(f"  [WARN] LibreOffice PowerPoint support (optional)")
 
     # Check Enterprise LLM configuration
     print("\nEnterprise LLM Configuration:")
@@ -874,32 +874,32 @@ def check_dependencies():
             token = f.read().strip()
         if token:
             masked_token = f"{token[:20]}..." if len(token) > 20 else "***"
-            print(f"  ✅ JWT Token: {masked_token}")
+            print(f"  [OK] JWT Token: {masked_token}")
         else:
-            print(f"  ❌ JWT_token.txt exists but is empty")
+            print(f"  [FAIL] JWT_token.txt exists but is empty")
             config_ok = False
     else:
-        print(f"  ❌ JWT_token.txt not found")
+        print(f"  [FAIL] JWT_token.txt not found")
         config_ok = False
 
     if os.path.exists("model_url.txt"):
         with open("model_url.txt", "r") as f:
             url = f.read().strip()
         if url:
-            print(f"  ✅ Model URL: {url[:50]}...")
+            print(f"  [OK] Model URL: {url[:50]}...")
         else:
-            print(f"  ❌ model_url.txt exists but is empty")
+            print(f"  [FAIL] model_url.txt exists but is empty")
             config_ok = False
     else:
-        print(f"  ❌ model_url.txt not found")
+        print(f"  [FAIL] model_url.txt not found")
         config_ok = False
 
     print("\n" + "=" * 40)
 
     if config_ok:
-        print("✅ Enterprise LLM configuration complete")
+        print("[OK] Enterprise LLM configuration complete")
     else:
-        print("❌ Enterprise LLM configuration incomplete")
+        print("[FAIL] Enterprise LLM configuration incomplete")
         print("\nTo configure:")
         print("  1. Create JWT_token.txt with your authentication token")
         print("  2. Create model_url.txt with your model endpoint URL")
